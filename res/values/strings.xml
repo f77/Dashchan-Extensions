@@ -1,6 +1,6 @@
 <resources>
 
-	<string name="text_app_name">Dashchan for 2ch.hk</string>
+	<string name="text_app_name">Dashchan for 2ch.hk (/po fork)</string>
 	<string name="text_activity_name">Dashchan</string>
 
 </resources>

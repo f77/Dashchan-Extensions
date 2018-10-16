@@ -1,6 +1,7 @@
 package com.mishiranu.dashchan.chan.dvach;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.net.Uri;
+import android.text.TextUtils;
 
 import chan.content.model.Attachment;
 import chan.content.model.EmbeddedAttachment;
@@ -38,6 +40,9 @@ public class DvachModelMapper {
 	private static final Uri URI_ICON_FIREFOX = Uri.parse("chan:///res/raw/raw_browser_firefox");
 	private static final Uri URI_ICON_OPERA = Uri.parse("chan:///res/raw/raw_browser_opera");
 	private static final Uri URI_ICON_SAFARI = Uri.parse("chan:///res/raw/raw_browser_safari");
+
+	private static final String LIKES_NAME = "Двачую";
+	private static final String DISLIKES_NAME = "RRRAGE!";
 
 	private static String fixAttachmentPath(String boardName, String path) {
 		if (!StringUtils.isEmpty(path)) {
@@ -187,6 +192,31 @@ public class DvachModelMapper {
 				tripcode = StringUtils.nullIfEmpty(StringUtils.clearHtml(tripcode).trim());
 			}
 		}
+
+        // Process /po and /news boards.
+        if (("po".equals (boardName) || "news".equals (boardName)) && comment != null) {
+            int               likes    = jsonObject.optInt ("likes");
+            int               dislikes = jsonObject.optInt ("dislikes");
+            ArrayList<String> allLikes = new ArrayList<> ();
+
+            if (likes > 0) {
+                allLikes.add (LIKES_NAME + " " + likes);
+            }
+            if (dislikes > 0) {
+                allLikes.add (DISLIKES_NAME + " " + dislikes);
+            }
+
+            if (allLikes.size () > 0) {
+                String resultCapcode = "";
+                if (capcode != null) {
+                    resultCapcode = capcode + " ";
+                }
+
+                resultCapcode += TextUtils.join ("   ", allLikes);
+                capcode = resultCapcode;
+            }
+        }
+
 		post.setName(name);
 		post.setIdentifier(identifier);
 		post.setTripcode(tripcode);
