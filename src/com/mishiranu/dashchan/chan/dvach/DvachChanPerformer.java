@@ -16,8 +16,10 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Pair;
+import android.util.SparseIntArray;
 
 import chan.content.ApiException;
 import chan.content.ChanPerformer;
@@ -480,6 +482,7 @@ public class DvachChanPerformer extends ChanPerformer {
 	@Override
 	public ReadCaptchaResult onReadCaptcha(ReadCaptchaData data) throws HttpException, InvalidResponseException {
 		DvachChanLocator locator = DvachChanLocator.get(this);
+		DvachChanConfiguration configuration = DvachChanConfiguration.get(this);
 		Uri uri = locator.buildPath("api", "captcha", "settings", data.boardName);
 		JSONObject jsonObject = new HttpRequest(uri, data).addCookie(buildCookies(null)).read().getJsonObject();
 		if (jsonObject == null) {
@@ -489,41 +492,45 @@ public class DvachChanPerformer extends ChanPerformer {
 			return new ReadCaptchaResult(CaptchaState.SKIP, null);
 		}
 
-		ArrayList<String> availableCaptchaTypes = null;
-		try {
-			JSONArray jsonArray = jsonObject.getJSONArray("types");
-			for (int i = 0; i < jsonArray.length(); i++) {
-				String remoteCaptchaType = CommonUtils.getJsonString(jsonArray.getJSONObject(i), "id");
-				String captchaType = null;
-				for (Pair<String, String> pair : DvachChanConfiguration.CAPTCHA_TYPES) {
-					if (pair.first.equals(remoteCaptchaType)) {
-						captchaType = pair.second;
-						break;
-					}
-				}
-				if (captchaType == null) {
-					continue;
-				}
-
-				if (availableCaptchaTypes == null) {
-					availableCaptchaTypes = new ArrayList<>();
-				}
-				availableCaptchaTypes.add(captchaType);
-			}
-		} catch (JSONException e) {
-			// Ignore exception
-		}
-
 		String captchaType = data.captchaType;
 		boolean overrideCaptchaType = false;
-		if (availableCaptchaTypes != null && !availableCaptchaTypes.contains(captchaType)) {
-			if (availableCaptchaTypes.contains(DvachChanConfiguration.CAPTCHA_TYPE_2CHAPTCHA)) {
-				captchaType = DvachChanConfiguration.CAPTCHA_TYPE_2CHAPTCHA;
-			} else {
-				captchaType = availableCaptchaTypes.iterator().next();
+
+		if (configuration.isCaptchaCheckAvailable()) {
+			ArrayList<String> availableCaptchaTypes = null;
+			try {
+				JSONArray jsonArray = jsonObject.getJSONArray("types");
+				for (int i = 0; i < jsonArray.length(); i++) {
+					String remoteCaptchaType = CommonUtils.getJsonString(jsonArray.getJSONObject(i), "id");
+					String supportedCaptchaType = null;
+					for (Pair<String, String> pair : DvachChanConfiguration.CAPTCHA_TYPES) {
+						if (pair.first.equals(remoteCaptchaType)) {
+							supportedCaptchaType = pair.second;
+							break;
+						}
+					}
+					if (supportedCaptchaType == null) {
+						continue;
+					}
+
+					if (availableCaptchaTypes == null) {
+						availableCaptchaTypes = new ArrayList<>();
+					}
+					availableCaptchaTypes.add(supportedCaptchaType);
+				}
+			} catch (JSONException e) {
+				// Ignore exception
 			}
-			overrideCaptchaType = true;
+
+			if (availableCaptchaTypes != null && !availableCaptchaTypes.contains(captchaType)) {
+				if (availableCaptchaTypes.contains(DvachChanConfiguration.CAPTCHA_TYPE_2CHAPTCHA)) {
+					captchaType = DvachChanConfiguration.CAPTCHA_TYPE_2CHAPTCHA;
+				} else {
+					captchaType = availableCaptchaTypes.iterator().next();
+				}
+				overrideCaptchaType = true;
+			}
 		}
+
 		return onReadCaptcha(data, captchaType, overrideCaptchaType, data.captchaPass != null
 				? data.captchaPass[0] : null, true);
 	}
@@ -624,43 +631,40 @@ public class DvachChanPerformer extends ChanPerformer {
 						int[] pixels = new int[width * height];
 						image.getPixels(pixels, 0, width, 0, 0, width, height);
 						image.recycle();
+
+						SparseIntArray colorCounts = new SparseIntArray();
+						for (int i = 0; i < width; i++) {
+							int c1 = pixels[i] & 0x00ffffff;
+							int c2 = pixels[width * (height - 1) + i] & 0x00ffffff;
+							colorCounts.put(c1, colorCounts.get(c1) + 1);
+							colorCounts.put(c2, colorCounts.get(c2) + 1);
+						}
+						for (int i = 1; i < height - 1; i++) {
+							int c1 = pixels[i * width] & 0x00ffffff;
+							int c2 = pixels[i * (width + 1) - 1] & 0x00ffffff;
+							colorCounts.put(c1, colorCounts.get(c1) + 1);
+							colorCounts.put(c2, colorCounts.get(c2) + 1);
+						}
+						int backgroundColor = 0;
+						int backgroundColorCount = -1;
+						for (int i = 0; i < colorCounts.size(); i++) {
+							int color = colorCounts.keyAt(i);
+							int count = colorCounts.get(color);
+							if (count > backgroundColorCount) {
+								backgroundColor = color;
+								backgroundColorCount = count;
+							}
+						}
+
 						for (int j = 0; j < height; j++) {
 							for (int i = 0; i < width; i++) {
-								boolean replace = false;
-								if (i == 0 || j == 0 || i == width - 1 || j == height - 1) {
-									replace = true;
-								} else if (pixels[j * width + i] != 0xffffffff) {
-									int count = 0;
-									if (pixels[(j - 1) * width + i - 1] != 0xffffffff) {
-										count++;
-									}
-									if (pixels[(j - 1) * width + i] != 0xffffffff) {
-										count++;
-									}
-									if (pixels[(j - 1) * width + i + 1] != 0xffffffff) {
-										count++;
-									}
-									if (pixels[j * width + i - 1] != 0xffffffff) {
-										count++;
-									}
-									if (pixels[j * width + i + 1] != 0xffffffff) {
-										count++;
-									}
-									if (pixels[(j + 1) * width + i - 1] != 0xffffffff) {
-										count++;
-									}
-									if (pixels[(j + 1) * width + i] != 0xffffffff) {
-										count++;
-									}
-									if (pixels[(j + 1) * width + i + 1] != 0xffffffff) {
-										count++;
-									}
-									if (count < 5) {
-										replace = true;
-									}
-								}
-								if (replace) {
-									pixels[j * width + i] = 0x00000000;
+								int color = pixels[j * width + i] & 0x00ffffff;
+								if (color == backgroundColor) {
+									pixels[j * width + i] = 0xffffffff;
+								} else {
+									int value = (int) (Color.red(color) * 0.2126f +
+											Color.green(color) * 0.7152f + Color.blue(color) * 0.0722f);
+									pixels[j * width + i] = Color.argb(0xff, value, value, value);
 								}
 							}
 						}

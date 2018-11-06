@@ -1,0 +1,7 @@
+<resources>
+
+	<string name="pref_captcha_check_available">Проверять доступность капчи</string>
+	<string name="pref_captcha_check_available_summary">Учитывать настройки разделов на сервере и загружать только
+		поддерживаемые виды капчи</string>
+
+</resources>

@@ -1,31 +1,31 @@
 buildscript {
 	repositories {
 		jcenter()
+		google()
 	}
 
 	dependencies {
-		classpath 'com.android.tools.build:gradle:2.3.1'
-		classpath 'me.tatarka:gradle-retrolambda:3.6.1'
+		classpath 'com.android.tools.build:gradle:3.1.4'
 	}
 }
 
 allprojects {
 	repositories {
 		jcenter()
+		google()
 	}
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 dependencies {
-	provided 'com.github.mishiranu:dashchan.library:+'
-	compile 'com.github.mishiranu:dashchan.static:+'
+	compileOnly 'com.github.mishiranu:dashchan.library:+'
+	implementation 'com.github.mishiranu:dashchan.static:+'
 }
 
 android {
 	compileSdkVersion 26
-	buildToolsVersion '26.0.2'
+	buildToolsVersion '28.0.3'
 
 	sourceSets.main {
 		manifest.srcFile 'AndroidManifest.xml'

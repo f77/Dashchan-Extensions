@@ -3,4 +3,8 @@
 	<string name="text_app_name">Dashchan for 2ch.hk (/po fork)</string>
 	<string name="text_activity_name">Dashchan</string>
 
+	<string name="pref_captcha_check_available">Check captcha\'s availability</string>
+	<string name="pref_captcha_check_available_summary">Honor server\'s board settings and load
+		supported captcha only</string>
+
 </resources>

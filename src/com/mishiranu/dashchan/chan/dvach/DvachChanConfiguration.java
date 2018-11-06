@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.res.Resources;
 import android.util.Pair;
 
 import chan.content.ChanConfiguration;
@@ -31,6 +32,8 @@ public class DvachChanConfiguration extends ChanConfiguration {
 		CAPTCHA_TYPES = Collections.unmodifiableList(captchaTypes);
 	}
 
+	private static final String KEY_CAPTCHA_CHECK_AVAILABLE = "captcha_check_available";
+
 	private static final String KEY_ICONS = "icons";
 	private static final String KEY_IMAGES_ENABLED = "images_enabled";
 	private static final String KEY_NAMES_ENABLED = "names_enabled";
@@ -51,6 +54,7 @@ public class DvachChanConfiguration extends ChanConfiguration {
 		for (Pair<String, String> pair : CAPTCHA_TYPES) {
 			addCaptchaType(pair.second);
 		}
+		addCustomPreference(KEY_CAPTCHA_CHECK_AVAILABLE, false);
 	}
 
 	@Override
@@ -119,6 +123,22 @@ public class DvachChanConfiguration extends ChanConfiguration {
 		reporting.comment = true;
 		reporting.multiplePosts = true;
 		return reporting;
+	}
+
+	@Override
+	public CustomPreference obtainCustomPreferenceConfiguration(String key) {
+		if (KEY_CAPTCHA_CHECK_AVAILABLE.equals(key)) {
+			Resources resources = getResources();
+			CustomPreference customPreference = new CustomPreference();
+			customPreference.title = resources.getString(R.string.pref_captcha_check_available);
+			customPreference.summary = resources.getString(R.string.pref_captcha_check_available_summary);
+			return customPreference;
+		}
+		return null;
+	}
+
+	public boolean isCaptchaCheckAvailable() {
+		return get(null, KEY_CAPTCHA_CHECK_AVAILABLE, false);
 	}
 
 	private volatile int filesCount = -1;
