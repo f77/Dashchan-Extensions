@@ -1,7 +1,6 @@
 package com.mishiranu.dashchan.chan.dvach;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,6 +39,10 @@ public class DvachModelMapper {
     private static final Uri URI_ICON_FIREFOX = Uri.parse ("chan:///res/raw/raw_browser_firefox");
     private static final Uri URI_ICON_OPERA   = Uri.parse ("chan:///res/raw/raw_browser_opera");
     private static final Uri URI_ICON_SAFARI  = Uri.parse ("chan:///res/raw/raw_browser_safari");
+
+    private static final String JSON_KEY_LIKES    = "likes";
+    private static final String JSON_KEY_DISLIKES = "dislikes";
+    private static final String JSON_KEY_COMMENT  = "comment";
 
     private static final String LIKES_NAME    = "Двачую";
     private static final String DISLIKES_NAME = "RRRAGE!";
@@ -194,33 +197,8 @@ public class DvachModelMapper {
         }
 
         // Process boards with enabled likes.
-        ArrayList<String> likesBoards = new ArrayList<> ();
-        likesBoards.add ("po");
-        likesBoards.add ("news");
-        likesBoards.add ("hry");
-        likesBoards.add ("d");
-        if (likesBoards.contains (boardName) && comment != null) {
-            int               likes    = jsonObject.optInt ("likes");
-            int               dislikes = jsonObject.optInt ("dislikes");
-            ArrayList<String> allLikes = new ArrayList<> ();
-
-            if (likes > 0) {
-                allLikes.add (LIKES_NAME + " " + likes);
-            }
-            if (dislikes > 0) {
-                allLikes.add (DISLIKES_NAME + " " + dislikes);
-            }
-
-            if (allLikes.size () > 0) {
-                String resultCapcode = "";
-                if (capcode != null) {
-                    resultCapcode = capcode + " ";
-                }
-
-                resultCapcode += TextUtils.join ("   ", allLikes);
-                capcode = resultCapcode;
-            }
-        }
+        String likesInfoString = getLikesInfoString (jsonObject);
+        capcode = (capcode == null ? likesInfoString : capcode + " " + likesInfoString);
 
         post.setName (name);
         post.setIdentifier (identifier);
@@ -408,5 +386,34 @@ public class DvachModelMapper {
             post.setAttachments (attachments);
         }
         return post;
+    }
+
+    /**
+     * Get string with likes and dislikes information or empty string.
+     *
+     * @param _postJsonObject
+     * @return
+     */
+    protected static String getLikesInfoString (JSONObject _postJsonObject) {
+        String result = "";
+        if (!_postJsonObject.has (JSON_KEY_LIKES) || !_postJsonObject.has (JSON_KEY_DISLIKES) || !_postJsonObject.has (JSON_KEY_COMMENT)) {
+            return result;
+        }
+
+        int               likes             = _postJsonObject.optInt (JSON_KEY_LIKES);
+        int               dislikes          = _postJsonObject.optInt (JSON_KEY_DISLIKES);
+        ArrayList<String> resultStringParts = new ArrayList<> ();
+
+        if (likes > 0) {
+            resultStringParts.add (LIKES_NAME + " " + likes);
+        }
+        if (dislikes > 0) {
+            resultStringParts.add (DISLIKES_NAME + " " + dislikes);
+        }
+        if (resultStringParts.size () <= 0) {
+            return result;
+        }
+
+        return TextUtils.join ("   ", resultStringParts);
     }
 }
