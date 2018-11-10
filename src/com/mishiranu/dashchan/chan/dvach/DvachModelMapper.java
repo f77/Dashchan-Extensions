@@ -44,6 +44,11 @@ public class DvachModelMapper {
     private static final String JSON_KEY_DISLIKES = "dislikes";
     private static final String JSON_KEY_COMMENT  = "comment";
 
+    private static final String NUMBER_ICONS_GREEN_URI_BASENAME = "chan:///res/raw/number_green_";
+    private static final String NUMBER_ICONS_RED_URI_BASENAME   = "chan:///res/raw/number_red_";
+    private static final int    NUMBER_ICONS_MAX_NUMBER_GREEN   = 100;
+    private static final int    NUMBER_ICONS_MAX_NUMBER_RED     = 100;
+
     private static final String LIKES_NAME    = "Двачую";
     private static final String DISLIKES_NAME = "RRRAGE!";
 
@@ -196,16 +201,6 @@ public class DvachModelMapper {
             }
         }
 
-        // Process boards with enabled likes.
-        String likesInfoString = getLikesInfoString (jsonObject);
-        capcode = (capcode == null ? likesInfoString : capcode + " " + likesInfoString);
-
-        post.setName (name);
-        post.setIdentifier (identifier);
-        post.setTripcode (tripcode);
-        post.setCapcode (capcode);
-        post.setEmail (email);
-
         String          icon  = CommonUtils.optJsonString (jsonObject, "icon");
         ArrayList<Icon> icons = null;
         if (!StringUtils.isEmpty (icon)) {
@@ -275,7 +270,18 @@ public class DvachModelMapper {
                 }
             }
         }
+
+
         post.setIcons (icons);
+        post.setName (name);
+        post.setIdentifier (identifier);
+        post.setTripcode (tripcode);
+        post.setCapcode (capcode);
+        post.setEmail (email);
+
+        // Process boards with enabled likes.
+        processPostRating (post, jsonObject, locator);
+
         return post;
     }
 
@@ -388,32 +394,36 @@ public class DvachModelMapper {
         return post;
     }
 
-    /**
-     * Get string with likes and dislikes information or empty string.
-     *
-     * @param _postJsonObject
-     * @return
-     */
-    protected static String getLikesInfoString (JSONObject _postJsonObject) {
-        String result = "";
+    protected static void processPostRating (Post _post, JSONObject _postJsonObject, DvachChanLocator _locator) {
         if (!_postJsonObject.has (JSON_KEY_LIKES) || !_postJsonObject.has (JSON_KEY_DISLIKES) || !_postJsonObject.has (JSON_KEY_COMMENT)) {
-            return result;
+            return;
         }
 
-        int               likes             = _postJsonObject.optInt (JSON_KEY_LIKES);
-        int               dislikes          = _postJsonObject.optInt (JSON_KEY_DISLIKES);
-        ArrayList<String> resultStringParts = new ArrayList<> ();
+        int               likes    = _postJsonObject.optInt (JSON_KEY_LIKES);
+        int               dislikes = _postJsonObject.optInt (JSON_KEY_DISLIKES);
+        ArrayList<Icon>   icons    = new ArrayList<> ();
+        ArrayList<String> strings  = new ArrayList<> ();
 
         if (likes > 0) {
-            resultStringParts.add (LIKES_NAME + " " + likes);
+            if (likes <= NUMBER_ICONS_MAX_NUMBER_GREEN) {
+                icons.add (new Icon (_locator, Uri.parse (NUMBER_ICONS_GREEN_URI_BASENAME + likes), LIKES_NAME));
+            } else {
+                strings.add (LIKES_NAME + " " + likes);
+            }
         }
         if (dislikes > 0) {
-            resultStringParts.add (DISLIKES_NAME + " " + dislikes);
-        }
-        if (resultStringParts.size () <= 0) {
-            return result;
+            if (dislikes <= NUMBER_ICONS_MAX_NUMBER_RED) {
+                icons.add (new Icon (_locator, Uri.parse (NUMBER_ICONS_RED_URI_BASENAME + dislikes), DISLIKES_NAME));
+            } else {
+                strings.add (DISLIKES_NAME + " " + dislikes);
+            }
         }
 
-        return TextUtils.join ("   ", resultStringParts);
+        if (icons.size () > 0) {
+            _post.setIcons (icons);
+        }
+        if (strings.size () > 0) {
+            _post.setCapcode (TextUtils.join ("   ", strings));
+        }
     }
 }
