@@ -303,11 +303,11 @@
 	[
 		{
 			"title": "Release",
-			"name": "1.37",
-			"code": 1,
+			"name": "1.38",
+			"code": 1038000,
 			"version": 1,
 			"minSdk": 16,
-			"length": 1196380,
+			"length": 1196376,
 			"source": "/f77/Dashchan-Extensions/master/update/package/DashchanDvach.apk",
 			"fingerprint": "4ccc015a5df4a17ad79ea7920c6bea9f2e9c3a1017402f868db9f05bb73ab286"
 		}
