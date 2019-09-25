@@ -3,12 +3,12 @@
 	[
 		{
 			"title": "Release",
-			"name": "2.10.9",
-			"code": 2010009,
+			"name": "2.10.10",
+			"code": 2010010,
 			"minVersion": 1,
 			"maxVersion": 1,
 			"minSdk": 16,
-			"length": 1122093,
+			"length": 1122105,
 			"source": "/f77/Dashchan-Extensions/master/update/package/Dashchan.apk",
 			"fingerprint": "4ccc015a5df4a17ad79ea7920c6bea9f2e9c3a1017402f868db9f05bb73ab286"
 		}
