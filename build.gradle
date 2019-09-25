@@ -5,8 +5,12 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'com.android.tools.build:gradle:3.1.4'
+		classpath 'com.android.tools.build:gradle:3.5.0'
 	}
+}
+
+plugins {
+	id 'com.gladed.androidgitversion' version '0.4.10'
 }
 
 allprojects {
@@ -19,13 +23,13 @@ allprojects {
 apply plugin: 'com.android.application'
 
 dependencies {
-	compileOnly 'com.github.mishiranu:dashchan.library:+'
-	implementation 'com.github.mishiranu:dashchan.static:+'
+	compileOnly 'com.github.f77:Dashchan-Library:1.7.8'
+	implementation 'com.github.f77:Dashchan-Static:1.0.1'
 }
 
 android {
-	compileSdkVersion 26
-	buildToolsVersion '28.0.3'
+	compileSdkVersion 29
+	buildToolsVersion '29.0.2'
 
 	sourceSets.main {
 		manifest.srcFile 'AndroidManifest.xml'
@@ -47,6 +51,8 @@ android {
 				storePassword keystoreProperties['store.password']
 				keyAlias keystoreProperties['key.alias']
 				keyPassword keystoreProperties['key.password']
+				v1SigningEnabled true
+				v2SigningEnabled true
 			}
 		}
 
@@ -68,5 +74,11 @@ android {
 	compileOptions {
 		sourceCompatibility JavaVersion.VERSION_1_8
 		targetCompatibility JavaVersion.VERSION_1_8
+	}
+	defaultConfig {
+		versionName androidGitVersion.name()
+		versionCode androidGitVersion.code()
+
+		minSdkVersion 16
 	}
 }
