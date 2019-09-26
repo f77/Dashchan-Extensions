@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.mishiranu.dashchan.chan.arhivach"
-	android:versionCode="1"
-	android:versionName="1.10">
-
-	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="23" />
+	package="com.mishiranu.dashchan.chan.arhivach">
 
 	<uses-feature android:name="chan.extension" />
 
@@ -13,7 +9,7 @@
 		<meta-data android:name="chan.extension.name" android:value="arhivach" />
 		<meta-data android:name="chan.extension.version" android:value="1" />
 		<meta-data android:name="chan.extension.icon" android:resource="@drawable/ic_storage_white" />
-		<meta-data android:name="chan.extension.source" android:value="//raw.githubusercontent.com/Mishiranu/Dashchan/master/update/data.json" />
+		<meta-data android:name="chan.extension.source" android:value="//raw.githubusercontent.com/f77/Dashchan/master/update/data.json" />
 		<meta-data android:name="chan.extension.class.configuration" android:value=".ArhivachChanConfiguration" />
 		<meta-data android:name="chan.extension.class.performer" android:value=".ArhivachChanPerformer" />
 		<meta-data android:name="chan.extension.class.locator" android:value=".ArhivachChanLocator" />

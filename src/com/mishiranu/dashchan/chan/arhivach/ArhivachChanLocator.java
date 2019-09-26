@@ -13,6 +13,7 @@ public class ArhivachChanLocator extends ChanLocator
 
 	public ArhivachChanLocator()
 	{
+		addChanHost("arhivach.ng");
 		addChanHost("arhivach.org");
 		setHttpsMode(HttpsMode.CONFIGURABLE);
 	}
