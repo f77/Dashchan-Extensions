@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 
+## [1.12-arhivach] - 2019-09-25
+### Changed
+- The source code file have been reformat.
+
 ## [1.11-arhivach] - 2019-09-25
 ### Changed
 - The git tag names are not branch specific((
