@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 import android.util.SparseIntArray;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,11 +44,25 @@ import chan.util.StringUtils;
 
 @SuppressLint("SimpleDateFormat")
 public class DvachChanPerformer extends ChanPerformer {
+    private static final int POSTS_COUNT_REQUEST_MAX_ATTEMPTS_COUNT = 5;
+    private static final int POSTS_COUNT_REQUEST_MIN_SLEEP_TIME_MILLIS = 200;
+    private static final int POSTS_COUNT_REQUEST_EXTRA_SLEEP_TIME_MILLIS = 700;
+    private static final int HTTP_CODE_SERVICE_TEMPORARILY_UNAVAILABLE = 503;
+
     private static final String COOKIE_USERCODE_AUTH = "usercode_auth";
     private static final String COOKIE_PASSCODE_AUTH = "passcode_auth";
 
     private static final String[] PREFERRED_BOARDS_ORDER = {"Разное", "Тематика", "Творчество", "Политика",
             "Техника и софт", "Игры", "Японская культура", "Взрослым", "Пробное"};
+
+    private Random random;
+
+    /**
+     * Constructor.
+     */
+    public DvachChanPerformer() {
+        random = new Random();
+    }
 
     private CookieBuilder buildCookies(String captchaPassCookie) {
         DvachChanConfiguration configuration = DvachChanConfiguration.get(this);
@@ -412,22 +428,50 @@ public class DvachChanPerformer extends ChanPerformer {
         }
     }
 
+    /**
+     * При попытке обновления количества постов в треде с помощью мобильного api,
+     * при слишком большом количестве одновременных запросов
+     * включается анти-дудос защита и сервер выкидывает ошибку 503.
+     * Вероятно, это будет не только для этого запроса, но и для многих других, если не всех.
+     *
+     * @link https://2ch.hk/makaba/mobile.fcgi?task=get_thread_last_info&board=news&thread=6477380
+     */
     @Override
     public ReadPostsCountResult onReadPostsCount(ReadPostsCountData data) throws HttpException,
             InvalidResponseException {
         DvachChanLocator locator = DvachChanLocator.get(this);
         Uri uri = locator.createFcgiUri("mobile", "task", "get_thread_last_info", "board",
                 data.boardName, "thread", data.threadNumber);
-        JSONObject jsonObject = new HttpRequest(uri, data).addCookie(buildCookiesWithCaptchaPass())
-                .read().getJsonObject();
-        if (jsonObject != null) {
-            if (jsonObject.has("posts")) {
-                return new ReadPostsCountResult(jsonObject.optInt("posts") + 1);
-            } else {
-                throw HttpException.createNotFoundException();
+
+        // Ловим ошибку 503.
+        HttpResponse response = null;
+        for (int i = 0; i < POSTS_COUNT_REQUEST_MAX_ATTEMPTS_COUNT; i++) {
+            int sleepTime = getPostsCountRequestSleepTime();
+            try {
+                response = new HttpRequest(uri, data).addCookie(buildCookiesWithCaptchaPass()).read();
+                break;
+            } catch (HttpException e) {
+                int httpCode = e.getResponseCode();
+                Log.e("onReadPostsCount_HTTP_E", e.getMessage() + " Code:" + httpCode);
+                if (httpCode == HTTP_CODE_SERVICE_TEMPORARILY_UNAVAILABLE) {
+                    Log.w("onReadPostsCount_SLEEP", sleepTime + " millis," + " attempt #" + i);
+                    SystemClock.sleep(sleepTime);
+                    continue;
+                }
+
+                throw e;
             }
         }
-        throw new InvalidResponseException();
+
+        JSONObject jsonObject = response.getJsonObject();
+        if (jsonObject == null) {
+            throw new InvalidResponseException();
+        }
+        if (!jsonObject.has("posts")) {
+            throw HttpException.createNotFoundException();
+        }
+
+        return new ReadPostsCountResult(jsonObject.optInt("posts") + 1);
     }
 
     @Override
@@ -1045,5 +1089,12 @@ public class DvachChanPerformer extends ChanPerformer {
         } catch (JSONException e) {
             throw new InvalidResponseException(e);
         }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    private int getPostsCountRequestSleepTime() {
+        return POSTS_COUNT_REQUEST_MIN_SLEEP_TIME_MILLIS
+                + random.nextInt(POSTS_COUNT_REQUEST_EXTRA_SLEEP_TIME_MILLIS) + 1;
     }
 }

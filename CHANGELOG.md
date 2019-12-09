@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 
+## [1.39-dvach] - 2019-12-09
+### Fixed
+- Fixed the counter of posts of favorite threads.
+
 ## [1.38-dvach] - 2019-09-25
 ### Changed
 - Tagged to the new tags system.
