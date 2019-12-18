@@ -28,6 +28,7 @@ public class FiftyfiveChanConfiguration extends ChanConfiguration {
 		posting.attachmentCount = 3;
 		posting.attachmentMimeTypes.add("image/*");
 		posting.attachmentMimeTypes.add("video/webm");
+		posting.attachmentMimeTypes.add("video/mp4");
 		posting.attachmentMimeTypes.add("audio/mp3");
 		posting.attachmentMimeTypes.add("application/ogg");
 		posting.attachmentSpoiler = true;
