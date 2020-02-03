@@ -84,6 +84,10 @@ public class DvachChanLocator extends ChanLocator {
         return buildQuery("makaba/" + name + ".fcgi", alternation);
     }
 
+    public Uri createChangePostRatingUri(String name, String... alternation) {
+        return buildQuery("api/" + name, alternation);
+    }
+
     public Uri createCatalogSearchUri(String boardName, String query) {
         return buildQuery(boardName + "/dashchan-query", "query", query);
     }

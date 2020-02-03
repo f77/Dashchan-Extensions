@@ -45,7 +45,7 @@ import chan.util.StringUtils;
 @SuppressLint("SimpleDateFormat")
 public class DvachChanPerformer extends ChanPerformer {
     private static final int POSTS_COUNT_REQUEST_MAX_ATTEMPTS_COUNT = 5;
-    private static final int POSTS_COUNT_REQUEST_MIN_SLEEP_TIME_MILLIS = 200;
+    private static final int POSTS_COUNT_REQUEST_MIN_SLEEP_TIME_MILLIS = 400;
     private static final int POSTS_COUNT_REQUEST_EXTRA_SLEEP_TIME_MILLIS = 700;
     private static final int HTTP_CODE_SERVICE_TEMPORARILY_UNAVAILABLE = 503;
 
@@ -1076,7 +1076,8 @@ public class DvachChanPerformer extends ChanPerformer {
     @Override
     public SendChangePostRatingResult onChangePostRating(SendChangePostRatingData data) throws HttpException, InvalidResponseException {
         DvachChanLocator locator = DvachChanLocator.get(this);
-        Uri uri = locator.createFcgiUri("likes", "task", (data.is_up ? "like" : "dislike"), "board", data.boardName, "num", data.post.getPostNumber());
+        Uri uri = locator.createChangePostRatingUri((data.is_up ? "like" : "dislike"),
+                "board", data.boardName, "num", data.post.getPostNumber());
 
         HttpResponse response = new HttpRequest(uri, data).addCookie(buildCookiesWithCaptchaPass()).read();
         JSONObject jsonObject = response.getJsonObject();

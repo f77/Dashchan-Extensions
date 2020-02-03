@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 
+## [1.40-dvach] - 2020-02-03
+### Changed
+- POSTS_COUNT_REQUEST_MIN_SLEEP_TIME_MILLIS has been increased from 200 ms to 400 ms.
+### Fixed
+- Likes and dislikes have been fixed.
+
 ## [1.39-dvach] - 2019-12-09
 ### Fixed
 - Fixed the counter of posts of favorite threads.
@@ -34,3 +40,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - App's version code takes from git.
 - Default captcha type has been changed to RECAPTCHA_2.
 - Source code files have been reformat.
+
+[1.40-dvach]: https://github.com/f77/Dashchan-Extensions/compare/1.39-dvach...1.40-dvach
+[1.39-dvach]: https://github.com/f77/Dashchan-Extensions/compare/1.38-dvach...1.39-dvach
