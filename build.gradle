@@ -2,12 +2,10 @@ buildscript {
     repositories {
         google()
         jcenter()
-        gradlePluginPortal()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath 'me.tatarka:gradle-retrolambda:3.6.1'
+        classpath 'com.android.tools.build:gradle:3.5.0'
     }
 }
 
@@ -21,8 +19,8 @@ allprojects {
 apply plugin: 'com.android.application'
 
 dependencies {
-    compileOnly 'com.github.mishiranu:dashchan.library:+'
-    implementation 'com.github.mishiranu:dashchan.static:+'
+    compileOnly 'com.github.f77:Dashchan-Library:1.7.8'
+    implementation 'com.github.f77:Dashchan-Static:1.0.1'
 }
 
 android {
@@ -49,6 +47,8 @@ android {
                 storePassword keystoreProperties['store.password']
                 keyAlias keystoreProperties['key.alias']
                 keyPassword keystoreProperties['key.password']
+                v1SigningEnabled true
+                v2SigningEnabled true
             }
         }
 
@@ -73,6 +73,5 @@ android {
     }
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
     }
 }
