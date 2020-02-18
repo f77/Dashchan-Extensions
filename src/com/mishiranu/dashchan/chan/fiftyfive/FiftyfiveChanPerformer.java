@@ -200,11 +200,11 @@ public class FiftyfiveChanPerformer extends ChanPerformer {
             readCaptchaValidators.put(data.boardName, pair);
         } catch (HttpException e) {
             if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                // noinspection ConstantConditions
                 captchaApiKey = pair.second ? this.captchaApiKey : null;
             } else if (e.getCause() instanceof EOFException){
-                // 55 has a nasty bug. Sometimes the page doesn't fully loads and triggers an EOF
-                // exception. It only occurs when loading a html page and the API is not affected.
+                // 55 has a nasty bug. Sometimes the page doesn't fully load and triggers an EOF
+                // exception. It only occurs when loading a html page and the API is not affected,
+                // so it's safe to ignore this exception
                 Log.d(this.getClass().getCanonicalName(), "Ignoring EOF exception...");
             } else {
                 throw e;
@@ -234,10 +234,9 @@ public class FiftyfiveChanPerformer extends ChanPerformer {
             if (holder.getResponseCode() != HttpURLConnection.HTTP_BAD_REQUEST) {
                 holder.checkResponseCode();
             }
-            if (responseText == null || !responseText.contains("<h1>Sucesso!</h1>") || !responseText.contains("<h1>Success!</h1>")) {
-                continue;
+            if (responseText != null && (responseText.contains("<h1>Sucesso!</h1>") || responseText.contains("<h1>Success!</h1>"))) {
+                return true;
             }
-            return true;
         }
     }
 
