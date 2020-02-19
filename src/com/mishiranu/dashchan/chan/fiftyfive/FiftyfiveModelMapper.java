@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import chan.content.model.EmbeddedAttachment;
 import chan.content.model.FileAttachment;
@@ -18,6 +20,8 @@ import chan.util.CommonUtils;
 import chan.util.StringUtils;
 
 public class FiftyfiveModelMapper {
+    private static final Pattern patternBanMessage = Pattern.compile("<tinyboard\\sban\\smessage>(.+)</tinyboard>");
+
     private static String parseAttachmentThumbnailExt(String fileExt) {
         switch (fileExt) {
             case ".webm":
@@ -39,15 +43,19 @@ public class FiftyfiveModelMapper {
         attachment.setSize(jsonObject.optInt("fsize"));
         attachment.setWidth(jsonObject.optInt("w"));
         attachment.setHeight(jsonObject.optInt("h"));
-        attachment.setFileUri(locator, locator.buildPath(boardName, "src", tim + ext));
-        Uri thumbPath;
 
-        if (jsonObject.optInt("spoiler", 0) == 1) {
+        Uri thumbPath;
+        Uri fileUri = locator.buildPath(boardName, "src", tim + ext);
+
+        if ("deleted".equals(ext)) {
+            thumbPath = fileUri = locator.buildPath("static", "deleted.png");
+        } else if (jsonObject.optInt("spoiler", 0) == 1) {
             thumbPath = locator.buildPath("static", "spoiler-b.png");
         } else {
             String thumbExt = parseAttachmentThumbnailExt(ext);
             thumbPath = locator.buildPath(boardName, "thumb", tim + thumbExt);
         }
+        attachment.setFileUri(locator, fileUri);
         attachment.setThumbnailUri(locator, thumbPath);
         attachment.setOriginalName(filename);
         return attachment;
@@ -56,6 +64,16 @@ public class FiftyfiveModelMapper {
     public static Post createPost(JSONObject jsonObject, FiftyfiveChanLocator locator, String boardName)
             throws JSONException {
         Post post = new Post();
+        String banMessage = "";
+        int banTagIndex;
+        String comNoMarkup = CommonUtils.optJsonString(jsonObject, "com_nomarkup");
+        if (comNoMarkup != null && (banTagIndex = comNoMarkup.lastIndexOf("<tinyboard ban message>")) >= 0) {
+            post.setPosterBanned(true);
+            Matcher matcher = patternBanMessage.matcher(comNoMarkup.substring(banTagIndex));
+            if (matcher.find()) {
+                banMessage = "<br/><br/><span class=\"heading\">(" + matcher.group(1) + ")</span>";
+            }
+        }
         if (jsonObject.optInt("sticky") != 0) {
             post.setSticky(true);
         }
@@ -99,7 +117,7 @@ public class FiftyfiveModelMapper {
         if (com != null) {
             // Vichan JSON API bug, sometimes comment is broken
             com = com.replace("<a  ", "<a ").replaceAll("href=\"\\?", "href=\"");
-            post.setComment(com);
+            post.setComment(com + banMessage);
         }
         String embed = StringUtils.nullIfEmpty(CommonUtils.optJsonString(jsonObject, "embed"));
         if (embed != null) {

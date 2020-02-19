@@ -25,7 +25,7 @@ public class FiftyfiveChanConfiguration extends ChanConfiguration {
 		posting.allowEmail = true;
 		posting.allowSubject = true;
 		posting.optionSage = true;
-		posting.attachmentCount = 3;
+		posting.attachmentCount = 5;
 		posting.attachmentMimeTypes.add("image/*");
 		posting.attachmentMimeTypes.add("video/webm");
 		posting.attachmentMimeTypes.add("video/mp4");
