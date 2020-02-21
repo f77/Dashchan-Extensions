@@ -4,8 +4,6 @@
 	android:versionCode="1"
 	android:versionName="1.3">
 
-	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="25" />
-
 	<uses-feature android:name="chan.extension" />
 
 	<application android:icon="@null" android:allowBackup="false" android:label="@string/text_app_name">
