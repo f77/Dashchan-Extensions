@@ -117,6 +117,7 @@ public class FiftyfiveModelMapper {
         if (com != null) {
             // Vichan JSON API bug, sometimes comment is broken
             com = com.replace("<a  ", "<a ").replaceAll("href=\"\\?", "href=\"");
+            com = com.replace("<span class=\"rquote\">", "<span style=\"color: #E0727F\">");
             post.setComment(com + banMessage);
         }
         String embed = StringUtils.nullIfEmpty(CommonUtils.optJsonString(jsonObject, "embed"));
