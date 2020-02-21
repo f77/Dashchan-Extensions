@@ -1,12 +1,16 @@
 buildscript {
     repositories {
-        google()
         jcenter()
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.5.3'
     }
+}
+
+plugins {
+    id 'com.gladed.androidgitversion' version '0.4.10'
 }
 
 allprojects {
@@ -72,6 +76,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
+        versionName androidGitVersion.name()
+        versionCode androidGitVersion.code()
+
         minSdkVersion 16
     }
 }

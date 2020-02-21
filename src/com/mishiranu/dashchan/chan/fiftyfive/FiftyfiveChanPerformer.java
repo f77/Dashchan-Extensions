@@ -201,7 +201,7 @@ public class FiftyfiveChanPerformer extends ChanPerformer {
         } catch (HttpException e) {
             if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                 captchaApiKey = pair.second ? this.captchaApiKey : null;
-            } else if (e.getCause() instanceof EOFException){
+            } else if (e.getCause() instanceof EOFException) {
                 // 55 has a nasty bug. Sometimes the page doesn't fully load and triggers an EOF
                 // exception. It only occurs when loading a html page and the API is not affected,
                 // so it's safe to ignore this exception
