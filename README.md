@@ -1,9 +1,11 @@
 # Dashchan Extension: dvach (/po fork)
 
 Это форк dvach-расширения Dashchan с возможностью просмотра лайков в /po, /news и некоторых других разделах.
+This is a fork of the Dashchan app developed primarily for the 2ch imageboard.
 
 ## Install:
 Инструкции по установке читать в [README приложения Dashchan Continued](https://github.com/f77/Dashchan/blob/master/README.md)!
+Read install instructions in the [README of Dashchan Continued app](https://github.com/f77/Dashchan/blob/master/README.md)!
 
 
 # Dashchan Extensions
