@@ -3,12 +3,12 @@
 	[
 		{
 			"title": "Release",
-			"name": "2.17.0",
-			"code": 2017000,
+			"name": "2.18.0",
+			"code": 2018000,
 			"minVersion": 1,
 			"maxVersion": 1,
 			"minSdk": 16,
-			"length": 3792197,
+			"length": 3796293,
 			"source": "/f77/Dashchan-Extensions/master/update/package/Dashchan.apk",
 			"fingerprint": "4ccc015a5df4a17ad79ea7920c6bea9f2e9c3a1017402f868db9f05bb73ab286"
 		}
