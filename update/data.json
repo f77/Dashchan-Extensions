@@ -3,12 +3,12 @@
 	[
 		{
 			"title": "Release",
-			"name": "2.21.0",
-			"code": 2021000,
+			"name": "2.22.0",
+			"code": 2022000,
 			"minVersion": 1,
 			"maxVersion": 1,
 			"minSdk": 16,
-			"length": 3800389,
+			"length": 3804485,
 			"source": "/f77/Dashchan-Extensions/master/update/package/Dashchan.apk",
 			"fingerprint": "4ccc015a5df4a17ad79ea7920c6bea9f2e9c3a1017402f868db9f05bb73ab286"
 		}
@@ -303,11 +303,11 @@
 	[
 		{
 			"title": "Release",
-			"name": "1.40-dvach",
-			"code": 1040000,
+			"name": "1.41-dvach",
+			"code": 1041000,
 			"version": 1,
 			"minSdk": 16,
-			"length": 1196814,
+			"length": 1202580,
 			"source": "/f77/Dashchan-Extensions/master/update/package/DashchanDvach.apk",
 			"fingerprint": "4ccc015a5df4a17ad79ea7920c6bea9f2e9c3a1017402f868db9f05bb73ab286"
 		}
