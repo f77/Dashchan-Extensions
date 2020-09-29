@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 
+## [1.41-dvach] - 2020-09-29
+### Changed
+- Package name has been changed from "com.mishiranu.dashchan.chan.dvach" to "com.f77.dashchan.chan.dvach".
+
 ## [1.40-dvach] - 2020-02-03
 ### Changed
 - POSTS_COUNT_REQUEST_MIN_SLEEP_TIME_MILLIS has been increased from 200 ms to 400 ms.
@@ -41,5 +45,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Default captcha type has been changed to RECAPTCHA_2.
 - Source code files have been reformat.
 
+[1.41-dvach]: https://github.com/f77/Dashchan-Extensions/compare/1.40-dvach...1.41-dvach
 [1.40-dvach]: https://github.com/f77/Dashchan-Extensions/compare/1.39-dvach...1.40-dvach
 [1.39-dvach]: https://github.com/f77/Dashchan-Extensions/compare/1.38-dvach...1.39-dvach

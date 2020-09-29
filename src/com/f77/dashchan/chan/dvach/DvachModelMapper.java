@@ -1,4 +1,4 @@
-package com.mishiranu.dashchan.chan.dvach;
+package com.f77.dashchan.chan.dvach;
 
 import android.net.Uri;
 import android.text.TextUtils;

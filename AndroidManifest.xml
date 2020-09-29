@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.mishiranu.dashchan.chan.dvach">
+	package="com.f77.dashchan.chan.dvach">
 
 	<uses-sdk android:targetSdkVersion="29" />
 
@@ -8,9 +8,9 @@
 
 	<application android:icon="@null" android:allowBackup="false" android:label="@string/text_app_name">
 
-		<meta-data android:name="chan.extension.name" android:value="dvach" />
+		<meta-data android:name="chan.extension.name" android:value="dvachpo" />
 		<meta-data android:name="chan.extension.version" android:value="1" />
-		<meta-data android:name="chan.extension.icon" android:resource="@drawable/ic_custom_dvach_white" />
+		<meta-data android:name="chan.extension.icon" android:resource="@drawable/ic_baseline_thumb_up_24" />
 		<meta-data android:name="chan.extension.source" android:value="//raw.githubusercontent.com/f77/Dashchan-Extensions/master/update/data.json" />
 		<meta-data android:name="chan.extension.class.configuration" android:value=".DvachChanConfiguration" />
 		<meta-data android:name="chan.extension.class.performer" android:value=".DvachChanPerformer" />
